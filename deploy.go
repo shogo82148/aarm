@@ -23,7 +23,11 @@ func (opts *DeployOption) Install(set *flag.FlagSet) {
 }
 
 func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
-	arn, err := app.getServiceArn(ctx, "my-app-runner-test") // TODO: load from service.json
+	svc, err := loadService(opts.ConfigPath)
+	if err != nil {
+		return err
+	}
+	arn, err := app.getServiceArn(ctx, aws.ToString(svc.ServiceName))
 	if err != nil {
 		return err
 	}

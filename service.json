@@ -1,0 +1,29 @@
+{
+  "ServiceName": "my-app-runner-test",
+  "InstanceConfiguration": {
+    "Cpu": "1024",
+    "Memory": "2048"
+  },
+  "SourceConfiguration": {
+    "AuthenticationConfiguration": {
+      "ConnectionArn": "arn:aws:apprunner:ap-northeast-1:445285296882:connection/shogo82148/a52503ce07314ca99c4e13c47c25877f"
+    },
+    "AutoDeploymentsEnabled": true,
+    "CodeRepository": {
+      "CodeConfiguration": {
+        "CodeConfigurationValues": {
+          "BuildCommand": "go build -o myapp .",
+          "Port": "8000",
+          "Runtime": "GO_1",
+          "StartCommand": "./myapp"
+        },
+        "ConfigurationSource": "API"
+      },
+      "RepositoryUrl": "https://github.com/shogo82148/aws-app-runner-test",
+      "SourceCodeVersion": {
+        "Type": "BRANCH",
+        "Value": "main"
+      }
+    }
+  }
+}
