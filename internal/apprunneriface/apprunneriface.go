@@ -13,3 +13,7 @@ type DeploymentStarter interface {
 type ServiceDescriber interface {
 	DescribeService(ctx context.Context, params *apprunner.DescribeServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.DescribeServiceOutput, error)
 }
+
+type ServicesLister interface {
+	ListServices(ctx context.Context, params *apprunner.ListServicesInput, optFns ...func(*apprunner.Options)) (*apprunner.ListServicesOutput, error)
+}
