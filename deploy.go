@@ -42,6 +42,14 @@ func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 	return nil
 }
 
+type serviceNotFoundError struct {
+	serviceName string
+}
+
+func (err *serviceNotFoundError) Error() string {
+	return fmt.Sprintf("aarm: service %q is not found", err.serviceName)
+}
+
 // getServiceArn finds the service that has name and return its arn.
 func (app *App) getServiceArn(ctx context.Context, name string) (string, error) {
 	paginator := apprunner.NewListServicesPaginator(app.appRunner, &apprunner.ListServicesInput{})
@@ -56,5 +64,5 @@ func (app *App) getServiceArn(ctx context.Context, name string) (string, error) 
 			}
 		}
 	}
-	return "", fmt.Errorf("aarm: service %q is not found", name)
+	return "", &serviceNotFoundError{serviceName: name}
 }
