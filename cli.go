@@ -46,7 +46,23 @@ func CLI(ctx context.Context, args []string) (int, error) {
 			return 1, err
 		}
 		app := NewApp(cfg)
-		app.Init(ctx, &opts)
+		if err := app.Init(ctx, &opts); err != nil {
+			return 1, err
+		}
+	case "deploy":
+		set := flag.NewFlagSet("aarm", flag.ExitOnError)
+		var opts DeployOption
+		opts.Install(set)
+		set.Parse(args[1:])
+
+		cfg, err := opts.newConfig(ctx)
+		if err != nil {
+			return 1, err
+		}
+		app := NewApp(cfg)
+		if err := app.Deploy(ctx, &opts); err != nil {
+			return 1, err
+		}
 	default:
 		return 1, fmt.Errorf("unknown sub-command: %s", args[0])
 	}

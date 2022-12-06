@@ -9,6 +9,7 @@ import (
 type appRunner struct {
 	apprunneriface.DeploymentStarter
 	apprunneriface.ServiceDescriber
+	apprunneriface.ServicesLister
 }
 
 type App struct {

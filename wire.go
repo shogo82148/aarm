@@ -16,6 +16,7 @@ func NewApp(cfg aws.Config) *App {
 		wire.Struct(new(appRunner), "*"),
 		wire.Bind(new(apprunneriface.DeploymentStarter), new(*apprunner.Client)),
 		wire.Bind(new(apprunneriface.ServiceDescriber), new(*apprunner.Client)),
+		wire.Bind(new(apprunneriface.ServicesLister), new(*apprunner.Client)),
 	)
 	return &App{}
 }
