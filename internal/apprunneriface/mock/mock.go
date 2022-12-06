@@ -11,3 +11,9 @@ type StartDeployment func(ctx context.Context, params *apprunner.StartDeployment
 func (mock StartDeployment) StartDeployment(ctx context.Context, params *apprunner.StartDeploymentInput, optFns ...func(*apprunner.Options)) (*apprunner.StartDeploymentOutput, error) {
 	return mock(ctx, params, optFns...)
 }
+
+type DescribeService func(ctx context.Context, params *apprunner.DescribeServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.DescribeServiceOutput, error)
+
+func (mock DescribeService) DescribeService(ctx context.Context, params *apprunner.DescribeServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.DescribeServiceOutput, error) {
+	return mock(ctx, params, optFns...)
+}

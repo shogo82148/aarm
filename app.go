@@ -8,6 +8,7 @@ import (
 
 type appRunner struct {
 	apprunneriface.DeploymentStarter
+	apprunneriface.ServiceDescriber
 }
 
 type App struct {

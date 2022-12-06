@@ -4,21 +4,21 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/apprunner"
 )
 
-func CLI(ctx context.Context) (int, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return 1, err
+func CLI(ctx context.Context, args []string) (int, error) {
+	if len(args) == 0 {
+		args = []string{"help"}
+	}
+	switch args[0] {
+	case "init":
+		cfg, err := config.LoadDefaultConfig(ctx)
+		if err != nil {
+			return 1, err
+		}
+		app := NewApp(cfg)
+		app.Init(ctx, nil)
 	}
 
-	svc := apprunner.NewFromConfig(cfg)
-	app := &App{
-		appRunner: &appRunner{
-			DeploymentStarter: svc,
-		},
-	}
-	app.Deploy(ctx)
 	return 0, nil
 }
