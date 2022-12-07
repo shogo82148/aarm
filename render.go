@@ -17,7 +17,7 @@ func (opts *RenderOption) Install(set *flag.FlagSet) {
 
 func (app *App) Render(ctx context.Context, opts *RenderOption) error {
 	out := bufio.NewWriter(os.Stdout)
-	svc, err := app.loadService(opts.ConfigPath)
+	svc, err := app.loadService()
 	if err != nil {
 		return err
 	}

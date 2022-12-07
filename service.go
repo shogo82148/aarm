@@ -2,9 +2,9 @@ package aarm
 
 import (
 	"encoding/json"
-	"os"
 
 	"github.com/aws/aws-sdk-go-v2/service/apprunner/types"
+	"github.com/google/go-jsonnet"
 )
 
 type Service struct {
@@ -437,14 +437,21 @@ func (v *ServiceObservabilityConfiguration) export() *types.ServiceObservability
 }
 
 // loadService load a service configuration from a file.
-func (*App) loadService(filepath string) (*Service, error) {
-	data, err := os.ReadFile(filepath)
+func (app *App) loadService() (*Service, error) {
+	vm := jsonnet.MakeVM()
+	for k, v := range app.extStr {
+		vm.ExtVar(k, v)
+	}
+	for k, v := range app.extCode {
+		vm.ExtCode(k, v)
+	}
+	jsonStr, err := vm.EvaluateFile(app.cfg.Service)
 	if err != nil {
 		return nil, err
 	}
 
 	var srv Service
-	if err := json.Unmarshal(data, &srv); err != nil {
+	if err := json.Unmarshal([]byte(jsonStr), &srv); err != nil {
 		return nil, err
 	}
 	return &srv, nil
