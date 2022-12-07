@@ -10,15 +10,17 @@ import (
 )
 
 type GlobalOptions struct {
-	Region  string
-	Profile string
-	Debug   bool
+	Region     string
+	Profile    string
+	Debug      bool
+	ConfigPath string
 }
 
 func (opts *GlobalOptions) Install(set *flag.FlagSet) {
 	set.StringVar(&opts.Region, "region", "", "aws region")
 	set.StringVar(&opts.Profile, "profile", "", "aws profile")
 	set.BoolVar(&opts.Debug, "debug", false, "debug")
+	set.StringVar(&opts.ConfigPath, "config-path", "service.json", "config path")
 }
 
 func newAWSConfig(ctx context.Context, opts *GlobalOptions) (aws.Config, error) {
@@ -50,6 +52,7 @@ func CLI(ctx context.Context, args []string) (int, error) {
 		if err := app.Init(ctx, &opts); err != nil {
 			return 1, err
 		}
+
 	case "deploy":
 		set := flag.NewFlagSet("aarm", flag.ExitOnError)
 		var opts DeployOption
@@ -61,6 +64,20 @@ func CLI(ctx context.Context, args []string) (int, error) {
 			return 1, err
 		}
 		if err := app.Deploy(ctx, &opts); err != nil {
+			return 1, err
+		}
+
+	case "diff":
+		set := flag.NewFlagSet("aarm", flag.ExitOnError)
+		var opts DiffOption
+		opts.Install(set)
+		set.Parse(args[1:])
+
+		app, err := NewApp(ctx, &opts.GlobalOptions)
+		if err != nil {
+			return 1, err
+		}
+		if err := app.Diff(ctx, &opts); err != nil {
 			return 1, err
 		}
 	default:

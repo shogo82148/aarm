@@ -14,14 +14,12 @@ type InitOption struct {
 	GlobalOptions
 	ServiceArn  string
 	ServiceName string
-	ConfigPath  string
 }
 
 func (opts *InitOption) Install(set *flag.FlagSet) {
 	opts.GlobalOptions.Install(set)
 	set.StringVar(&opts.ServiceArn, "service-arn", "", "service arn")
 	set.StringVar(&opts.ServiceName, "service-name", "", "service name")
-	set.StringVar(&opts.ConfigPath, "config-path", "service.json", "config path")
 }
 
 func (app *App) Init(ctx context.Context, opts *InitOption) error {

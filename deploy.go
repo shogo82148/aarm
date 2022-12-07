@@ -11,14 +11,10 @@ import (
 
 type DeployOption struct {
 	GlobalOptions
-	ServiceArn  string
-	ServiceName string
-	ConfigPath  string
 }
 
 func (opts *DeployOption) Install(set *flag.FlagSet) {
 	opts.GlobalOptions.Install(set)
-	set.StringVar(&opts.ConfigPath, "config-path", "service.json", "config path")
 }
 
 func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
