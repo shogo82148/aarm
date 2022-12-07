@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/apprunner"
@@ -29,9 +28,15 @@ func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 	}
 	arn, err := app.getServiceArn(ctx, aws.ToString(svc.ServiceName))
 	if err != nil {
+		if _, ok := as[*serviceNotFoundError](err); ok {
+			// service not found. create a new one.
+			if err := app.createService(ctx, svc); err != nil {
+				return err
+			}
+			return nil
+		}
 		return err
 	}
-	log.Println(arn)
 	_, err = app.appRunner.StartDeployment(ctx, &apprunner.StartDeploymentInput{
 		ServiceArn: aws.String(arn),
 	})
@@ -40,6 +45,31 @@ func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 	}
 
 	return nil
+}
+
+func (app *App) createService(ctx context.Context, svc *Service) error {
+	_, err := app.appRunner.CreateService(ctx, &apprunner.CreateServiceInput{
+		ServiceName:                 aws.String(*svc.ServiceName),
+		SourceConfiguration:         svc.SourceConfiguration.export(),
+		AutoScalingConfigurationArn: svc.AutoScalingConfigurationArn,
+		EncryptionConfiguration:     svc.EncryptionConfiguration.export(),
+		HealthCheckConfiguration:    svc.HealthCheckConfiguration.export(),
+		InstanceConfiguration:       svc.InstanceConfiguration.export(),
+		NetworkConfiguration:        svc.NetworkConfiguration.export(),
+		ObservabilityConfiguration:  svc.ObservabilityConfiguration.export(),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type serviceNotFoundError struct {
+	serviceName string
+}
+
+func (err *serviceNotFoundError) Error() string {
+	return fmt.Sprintf("aarm: service %q is not found", err.serviceName)
 }
 
 // getServiceArn finds the service that has name and return its arn.
@@ -56,5 +86,5 @@ func (app *App) getServiceArn(ctx context.Context, name string) (string, error) 
 			}
 		}
 	}
-	return "", fmt.Errorf("aarm: service %q is not found", name)
+	return "", &serviceNotFoundError{serviceName: name}
 }
