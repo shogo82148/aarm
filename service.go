@@ -437,7 +437,7 @@ func (v *ServiceObservabilityConfiguration) export() *types.ServiceObservability
 }
 
 // loadService load a service configuration from a file.
-func loadService(filepath string) (*Service, error) {
+func (*App) loadService(filepath string) (*Service, error) {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, err
@@ -448,4 +448,8 @@ func loadService(filepath string) (*Service, error) {
 		return nil, err
 	}
 	return &srv, nil
+}
+
+func (*App) marshalService(svc any) ([]byte, error) {
+	return json.MarshalIndent(svc, "", "  ")
 }
