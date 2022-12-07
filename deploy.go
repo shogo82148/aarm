@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"reflect"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/apprunner"
@@ -23,12 +24,13 @@ func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 	if err != nil {
 		return err
 	}
-	app.Log("[INFO] deploying service %q", aws.ToString(svc.ServiceName))
 
+	// find the service from the list
 	arn, err := app.getServiceArn(ctx, aws.ToString(svc.ServiceName))
 	if err != nil {
 		if _, ok := as[*serviceNotFoundError](err); ok {
 			// service not found. create a new one.
+			app.Log("[INFO] create a new service %q", aws.ToString(svc.ServiceName))
 			if err := app.createService(ctx, svc); err != nil {
 				return err
 			}
@@ -36,9 +38,31 @@ func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 		}
 		return err
 	}
-	_, err = app.appRunner.StartDeployment(ctx, &apprunner.StartDeploymentInput{
+
+	app.Log("[DEBUG] describe %q", arn)
+	out, err := app.appRunner.DescribeService(ctx, &apprunner.DescribeServiceInput{
 		ServiceArn: aws.String(arn),
 	})
+	if err != nil {
+		return nil
+	}
+	remote := importService(out.Service)
+
+	if reflect.DeepEqual(svc, remote) {
+		// no need to update. start new deployment.
+		app.Log("[INFO] start new deployment on %q", arn)
+		_, err = app.appRunner.StartDeployment(ctx, &apprunner.StartDeploymentInput{
+			ServiceArn: aws.String(arn),
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// need to update
+	app.Log("[INFO] update service on %q", arn)
+	err = app.updateService(ctx, arn, svc)
 	if err != nil {
 		return err
 	}
@@ -53,6 +77,23 @@ func (app *App) createService(ctx context.Context, svc *Service) error {
 		SourceConfiguration:         svc.SourceConfiguration.export(),
 		AutoScalingConfigurationArn: svc.AutoScalingConfigurationArn,
 		EncryptionConfiguration:     svc.EncryptionConfiguration.export(),
+		HealthCheckConfiguration:    svc.HealthCheckConfiguration.export(),
+		InstanceConfiguration:       svc.InstanceConfiguration.export(),
+		NetworkConfiguration:        svc.NetworkConfiguration.export(),
+		ObservabilityConfiguration:  svc.ObservabilityConfiguration.export(),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (app *App) updateService(ctx context.Context, arn string, svc *Service) error {
+	app.Log("[DEBUG] update service on %q", arn)
+	_, err := app.appRunner.UpdateService(ctx, &apprunner.UpdateServiceInput{
+		ServiceArn:                  aws.String(arn),
+		SourceConfiguration:         svc.SourceConfiguration.export(),
+		AutoScalingConfigurationArn: svc.AutoScalingConfigurationArn,
 		HealthCheckConfiguration:    svc.HealthCheckConfiguration.export(),
 		InstanceConfiguration:       svc.InstanceConfiguration.export(),
 		NetworkConfiguration:        svc.NetworkConfiguration.export(),

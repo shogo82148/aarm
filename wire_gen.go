@@ -23,6 +23,7 @@ func NewApp(ctx context.Context, opts *GlobalOptions) (*App, error) {
 		ServiceCreator:    client,
 		ServiceDescriber:  client,
 		ServicesLister:    client,
+		ServiceUpdater:    client,
 	}
 	app := newApp(aarmAppRunner, opts)
 	return app, nil

@@ -26,6 +26,7 @@ type appRunner struct {
 	apprunneriface.ServiceCreator
 	apprunneriface.ServiceDescriber
 	apprunneriface.ServicesLister
+	apprunneriface.ServiceUpdater
 }
 
 type App struct {
