@@ -9,6 +9,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/fujiwara/logutils v1.1.0
 	github.com/google/wire v0.5.0
+	github.com/hexops/gotextdiff v1.0.3
 	github.com/shogo82148/hi v0.0.0-20221205152246-2201b64121a4
 	golang.org/x/sys v0.2.0
 )
