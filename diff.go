@@ -2,7 +2,6 @@ package aarm
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"strings"
@@ -26,11 +25,11 @@ func (opts *DiffOption) Install(set *flag.FlagSet) {
 func (app *App) Diff(ctx context.Context, opts *DiffOption) error {
 	// local service definition
 	configPath := opts.ConfigPath
-	svc, err := loadService(configPath)
+	svc, err := app.loadService(configPath)
 	if err != nil {
 		return err
 	}
-	local, err := json.MarshalIndent(svc, "", "  ")
+	local, err := app.marshalService(svc)
 	if err != nil {
 		return err
 	}
@@ -47,7 +46,7 @@ func (app *App) Diff(ctx context.Context, opts *DiffOption) error {
 		return err
 	}
 	svc = importService(out.Service)
-	remote, err := json.MarshalIndent(svc, "", "  ")
+	remote, err := app.marshalService(svc)
 	if err != nil {
 		return err
 	}

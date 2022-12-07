@@ -20,7 +20,7 @@ func (opts *DeployOption) Install(set *flag.FlagSet) {
 
 func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 
-	svc, err := loadService(opts.ConfigPath)
+	svc, err := app.loadService(opts.ConfigPath)
 	if err != nil {
 		return err
 	}
