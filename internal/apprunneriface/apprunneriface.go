@@ -21,3 +21,7 @@ type ServiceDescriber interface {
 type ServicesLister interface {
 	ListServices(ctx context.Context, params *apprunner.ListServicesInput, optFns ...func(*apprunner.Options)) (*apprunner.ListServicesOutput, error)
 }
+
+type ServiceUpdater interface {
+	UpdateService(ctx context.Context, params *apprunner.UpdateServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.UpdateServiceOutput, error)
+}
