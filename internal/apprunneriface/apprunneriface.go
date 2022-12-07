@@ -10,6 +10,10 @@ type DeploymentStarter interface {
 	StartDeployment(ctx context.Context, params *apprunner.StartDeploymentInput, optFns ...func(*apprunner.Options)) (*apprunner.StartDeploymentOutput, error)
 }
 
+type ServiceCreator interface {
+	CreateService(ctx context.Context, params *apprunner.CreateServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.CreateServiceOutput, error)
+}
+
 type ServiceDescriber interface {
 	DescribeService(ctx context.Context, params *apprunner.DescribeServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.DescribeServiceOutput, error)
 }

@@ -18,6 +18,7 @@ func as[T error](err error) (T, bool) {
 
 type appRunner struct {
 	apprunneriface.DeploymentStarter
+	apprunneriface.ServiceCreator
 	apprunneriface.ServiceDescriber
 	apprunneriface.ServicesLister
 }

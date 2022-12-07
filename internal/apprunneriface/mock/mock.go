@@ -12,6 +12,12 @@ func (mock StartDeployment) StartDeployment(ctx context.Context, params *apprunn
 	return mock(ctx, params, optFns...)
 }
 
+type CreateService func(ctx context.Context, params *apprunner.CreateServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.CreateServiceOutput, error)
+
+func (mock CreateService) CreateService(ctx context.Context, params *apprunner.CreateServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.CreateServiceOutput, error) {
+	return mock(ctx, params, optFns...)
+}
+
 type DescribeService func(ctx context.Context, params *apprunner.DescribeServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.DescribeServiceOutput, error)
 
 func (mock DescribeService) DescribeService(ctx context.Context, params *apprunner.DescribeServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.DescribeServiceOutput, error) {

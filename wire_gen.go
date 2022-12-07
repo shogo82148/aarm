@@ -16,6 +16,7 @@ func NewApp(cfg aws.Config) *App {
 	client := newAppRunner(cfg)
 	aarmAppRunner := &appRunner{
 		DeploymentStarter: client,
+		ServiceCreator:    client,
 		ServiceDescriber:  client,
 		ServicesLister:    client,
 	}
