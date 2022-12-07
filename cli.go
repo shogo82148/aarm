@@ -4,16 +4,47 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 )
+
+type keyValuesOptions struct {
+	m map[string]string
+}
+
+func (opt keyValuesOptions) String() string {
+	keys := make([]string, 0, len(opt.m))
+	for k := range opt.m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	kv := make([]string, 0, len(opt.m))
+	for _, k := range keys {
+		kv = append(kv, k+"="+opt.m[k])
+	}
+	return strings.Join(kv, ",")
+}
+
+func (opt *keyValuesOptions) Set(s string) error {
+	if opt.m == nil {
+		opt.m = map[string]string{}
+	}
+	k, v, _ := strings.Cut(s, "=")
+	opt.m[k] = v
+	return nil
+}
 
 type GlobalOptions struct {
 	Region     string
 	Profile    string
 	Debug      bool
 	ConfigPath string
+	ExtStr     keyValuesOptions
+	ExtCode    keyValuesOptions
 }
 
 func (opts *GlobalOptions) Install(set *flag.FlagSet) {
@@ -21,6 +52,8 @@ func (opts *GlobalOptions) Install(set *flag.FlagSet) {
 	set.StringVar(&opts.Profile, "profile", "", "aws profile")
 	set.BoolVar(&opts.Debug, "debug", false, "debug")
 	set.StringVar(&opts.ConfigPath, "config-path", "aarm.yml", "config path")
+	set.Var(&opts.ExtStr, "ext-str", "ext strings")
+	set.Var(&opts.ExtCode, "ext-code", "ext code")
 }
 
 func newAWSConfig(ctx context.Context, opts *GlobalOptions) (aws.Config, error) {

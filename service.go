@@ -439,6 +439,12 @@ func (v *ServiceObservabilityConfiguration) export() *types.ServiceObservability
 // loadService load a service configuration from a file.
 func (app *App) loadService() (*Service, error) {
 	vm := jsonnet.MakeVM()
+	for k, v := range app.extStr {
+		vm.ExtVar(k, v)
+	}
+	for k, v := range app.extCode {
+		vm.ExtCode(k, v)
+	}
 	jsonStr, err := vm.EvaluateFile(app.cfg.Service)
 	if err != nil {
 		return nil, err

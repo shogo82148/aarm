@@ -34,6 +34,8 @@ type App struct {
 	appRunner *appRunner
 	logger    *log.Logger
 	cfg       *aarmConfig
+	extStr    map[string]string
+	extCode   map[string]string
 }
 
 type aarmConfig struct {
@@ -60,6 +62,8 @@ func newApp(runner *appRunner, opts *GlobalOptions) (*App, error) {
 		appRunner: runner,
 		logger:    logger,
 		cfg:       &cfg,
+		extStr:    opts.ExtStr.m,
+		extCode:   opts.ExtCode.m,
 	}, nil
 }
 
