@@ -2,7 +2,6 @@ package aarm
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"os"
 
@@ -31,10 +30,9 @@ func (app *App) Init(ctx context.Context, opts *InitOption) error {
 	}
 
 	service := importService(out.Service)
-	data, err := json.MarshalIndent(service, "", "  ")
-
+	data, err := app.marshalService(service)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(opts.ConfigPath, data, 0o644)
+	return os.WriteFile(app.cfg.Service, data, 0o644)
 }

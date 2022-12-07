@@ -8,6 +8,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/apprunner v1.15.1
 	github.com/fatih/color v1.13.0
 	github.com/fujiwara/logutils v1.1.0
+	github.com/goccy/go-yaml v1.9.7
+	github.com/google/go-jsonnet v0.19.1
 	github.com/google/wire v0.5.0
 	github.com/hexops/gotextdiff v1.0.3
 	github.com/shogo82148/hi v0.0.0-20221205152246-2201b64121a4
@@ -32,4 +34,7 @@ require (
 	golang.org/x/exp v0.0.0-20221126150942-6ab00d035af9 // indirect
 	golang.org/x/mod v0.6.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
+	sigs.k8s.io/yaml v1.1.0 // indirect
 )

@@ -20,7 +20,7 @@ func (opts *GlobalOptions) Install(set *flag.FlagSet) {
 	set.StringVar(&opts.Region, "region", "", "aws region")
 	set.StringVar(&opts.Profile, "profile", "", "aws profile")
 	set.BoolVar(&opts.Debug, "debug", false, "debug")
-	set.StringVar(&opts.ConfigPath, "config-path", "service.json", "config path")
+	set.StringVar(&opts.ConfigPath, "config-path", "aarm.yml", "config path")
 }
 
 func newAWSConfig(ctx context.Context, opts *GlobalOptions) (aws.Config, error) {

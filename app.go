@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/apprunner"
 	"github.com/fatih/color"
 	"github.com/fujiwara/logutils"
+	"github.com/goccy/go-yaml"
 	"github.com/shogo82148/aarm/internal/apprunneriface"
 )
 
@@ -32,9 +33,23 @@ type appRunner struct {
 type App struct {
 	appRunner *appRunner
 	logger    *log.Logger
+	cfg       *aarmConfig
 }
 
-func newApp(runner *appRunner, opts *GlobalOptions) *App {
+type aarmConfig struct {
+	Service string `yaml:"service"`
+}
+
+func newApp(runner *appRunner, opts *GlobalOptions) (*App, error) {
+	data, err := os.ReadFile(opts.ConfigPath)
+	if err != nil {
+		return nil, err
+	}
+	var cfg aarmConfig
+	if err := yaml.Unmarshal(data, &cfg); err != nil {
+		return nil, err
+	}
+
 	logger := log.New(io.Discard, "", log.Ldate|log.Ltime|log.Lmicroseconds)
 	if opts.Debug {
 		logger.SetOutput(newLogFilter(os.Stderr, "DEBUG"))
@@ -44,7 +59,8 @@ func newApp(runner *appRunner, opts *GlobalOptions) *App {
 	return &App{
 		appRunner: runner,
 		logger:    logger,
-	}
+		cfg:       &cfg,
+	}, nil
 }
 
 func newAppRunner(cfg aws.Config) *apprunner.Client {

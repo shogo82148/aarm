@@ -24,8 +24,7 @@ func (opts *DiffOption) Install(set *flag.FlagSet) {
 
 func (app *App) Diff(ctx context.Context, opts *DiffOption) error {
 	// local service definition
-	configPath := opts.ConfigPath
-	svc, err := app.loadService(configPath)
+	svc, err := app.loadService()
 	if err != nil {
 		return err
 	}
@@ -52,7 +51,7 @@ func (app *App) Diff(ctx context.Context, opts *DiffOption) error {
 	}
 
 	edits := myers.ComputeEdits(span.URIFromPath(arn), string(remote), string(local))
-	unified := fmt.Sprintf("%s", gotextdiff.ToUnified(arn, configPath, string(remote), edits))
+	unified := fmt.Sprintf("%s", gotextdiff.ToUnified(arn, app.cfg.Service, string(remote), edits))
 	fmt.Print(coloredDiff(unified))
 
 	return nil

@@ -1,3 +1,5 @@
+local branch = "main";
+
 {
   "ServiceName": "my-app-runner-test2",
   "SourceConfiguration": {
@@ -18,7 +20,7 @@
       "RepositoryUrl": "https://github.com/shogo82148/aws-app-runner-test",
       "SourceCodeVersion": {
         "Type": "BRANCH",
-        "Value": "main"
+        "Value": branch,
       }
     }
   },
