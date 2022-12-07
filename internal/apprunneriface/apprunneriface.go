@@ -25,3 +25,7 @@ type ServicesLister interface {
 type ServiceUpdater interface {
 	UpdateService(ctx context.Context, params *apprunner.UpdateServiceInput, optFns ...func(*apprunner.Options)) (*apprunner.UpdateServiceOutput, error)
 }
+
+type OperationsLister interface {
+	ListOperations(context.Context, *apprunner.ListOperationsInput, ...func(*apprunner.Options)) (*apprunner.ListOperationsOutput, error)
+}
