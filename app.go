@@ -65,5 +65,9 @@ func newLogFilter(w io.Writer, minLevel string) *logutils.LevelFilter {
 }
 
 func (app *App) Log(f string, v ...any) {
-	app.logger.Printf(f, v...)
+	logger := app.logger
+	if logger == nil {
+		return
+	}
+	logger.Printf(f, v...)
 }
