@@ -22,10 +22,13 @@ func (opts *DeployOption) Install(set *flag.FlagSet) {
 }
 
 func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
+
 	svc, err := loadService(opts.ConfigPath)
 	if err != nil {
 		return err
 	}
+	app.Log("[INFO] deploying service %q", aws.ToString(svc.ServiceName))
+
 	arn, err := app.getServiceArn(ctx, aws.ToString(svc.ServiceName))
 	if err != nil {
 		if _, ok := as[*serviceNotFoundError](err); ok {
@@ -48,8 +51,9 @@ func (app *App) Deploy(ctx context.Context, opts *DeployOption) error {
 }
 
 func (app *App) createService(ctx context.Context, svc *Service) error {
+	app.Log("[DEBUG] create service %q", aws.ToString(svc.ServiceName))
 	_, err := app.appRunner.CreateService(ctx, &apprunner.CreateServiceInput{
-		ServiceName:                 aws.String(*svc.ServiceName),
+		ServiceName:                 svc.ServiceName,
 		SourceConfiguration:         svc.SourceConfiguration.export(),
 		AutoScalingConfigurationArn: svc.AutoScalingConfigurationArn,
 		EncryptionConfiguration:     svc.EncryptionConfiguration.export(),
@@ -74,6 +78,8 @@ func (err *serviceNotFoundError) Error() string {
 
 // getServiceArn finds the service that has name and return its arn.
 func (app *App) getServiceArn(ctx context.Context, name string) (string, error) {
+	app.Log("[DEBUG] list service to find %q", name)
+
 	paginator := apprunner.NewListServicesPaginator(app.appRunner, &apprunner.ListServicesInput{})
 	for paginator.HasMorePages() {
 		out, err := paginator.NextPage(ctx)

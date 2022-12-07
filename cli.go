@@ -12,14 +12,16 @@ import (
 type GlobalOptions struct {
 	Region  string
 	Profile string
+	Debug   bool
 }
 
 func (opts *GlobalOptions) Install(set *flag.FlagSet) {
 	set.StringVar(&opts.Region, "region", "", "aws region")
 	set.StringVar(&opts.Profile, "profile", "", "aws profile")
+	set.BoolVar(&opts.Debug, "debug", false, "debug")
 }
 
-func (opts *GlobalOptions) newConfig(ctx context.Context) (aws.Config, error) {
+func newAWSConfig(ctx context.Context, opts *GlobalOptions) (aws.Config, error) {
 	awsOpts := []func(*config.LoadOptions) error{}
 	if opts.Region != "" {
 		awsOpts = append(awsOpts, config.WithRegion(opts.Region))
@@ -41,11 +43,10 @@ func CLI(ctx context.Context, args []string) (int, error) {
 		opts.Install(set)
 		set.Parse(args[1:])
 
-		cfg, err := opts.newConfig(ctx)
+		app, err := NewApp(ctx, &opts.GlobalOptions)
 		if err != nil {
 			return 1, err
 		}
-		app := NewApp(cfg)
 		if err := app.Init(ctx, &opts); err != nil {
 			return 1, err
 		}
@@ -55,11 +56,10 @@ func CLI(ctx context.Context, args []string) (int, error) {
 		opts.Install(set)
 		set.Parse(args[1:])
 
-		cfg, err := opts.newConfig(ctx)
+		app, err := NewApp(ctx, &opts.GlobalOptions)
 		if err != nil {
 			return 1, err
 		}
-		app := NewApp(cfg)
 		if err := app.Deploy(ctx, &opts); err != nil {
 			return 1, err
 		}

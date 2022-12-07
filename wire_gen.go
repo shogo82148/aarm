@@ -7,19 +7,23 @@
 package aarm
 
 import (
-	"github.com/aws/aws-sdk-go-v2/aws"
+	"context"
 )
 
 // Injectors from wire.go:
 
-func NewApp(cfg aws.Config) *App {
-	client := newAppRunner(cfg)
+func NewApp(ctx context.Context, opts *GlobalOptions) (*App, error) {
+	config, err := newAWSConfig(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	client := newAppRunner(config)
 	aarmAppRunner := &appRunner{
 		DeploymentStarter: client,
 		ServiceCreator:    client,
 		ServiceDescriber:  client,
 		ServicesLister:    client,
 	}
-	app := newApp(aarmAppRunner)
-	return app
+	app := newApp(aarmAppRunner, opts)
+	return app, nil
 }
