@@ -24,6 +24,7 @@ func NewApp(ctx context.Context, opts *GlobalOptions) (*App, error) {
 		ServiceDescriber:  client,
 		ServicesLister:    client,
 		ServiceUpdater:    client,
+		OperationsLister:  client,
 	}
 	app, err := newApp(aarmAppRunner, opts)
 	if err != nil {

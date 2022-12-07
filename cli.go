@@ -128,6 +128,20 @@ func CLI(ctx context.Context, args []string) (int, error) {
 			return 1, err
 		}
 
+	case "wait":
+		set := flag.NewFlagSet("aarm", flag.ExitOnError)
+		var opts WaitOption
+		opts.Install(set)
+		set.Parse(args[1:])
+
+		app, err := NewApp(ctx, &opts.GlobalOptions)
+		if err != nil {
+			return 1, err
+		}
+		if err := app.Wait(ctx, &opts); err != nil {
+			return 1, err
+		}
+
 	default:
 		return 1, fmt.Errorf("unknown sub-command: %s", args[0])
 	}

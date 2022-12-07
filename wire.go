@@ -20,6 +20,7 @@ func NewApp(ctx context.Context, opts *GlobalOptions) (*App, error) {
 		wire.Bind(new(apprunneriface.ServiceDescriber), new(*apprunner.Client)),
 		wire.Bind(new(apprunneriface.ServicesLister), new(*apprunner.Client)),
 		wire.Bind(new(apprunneriface.ServiceUpdater), new(*apprunner.Client)),
+		wire.Bind(new(apprunneriface.OperationsLister), new(*apprunner.Client)),
 	)
 	return &App{}, nil
 }
